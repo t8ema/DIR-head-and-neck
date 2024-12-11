@@ -1,21 +1,3 @@
-### FOLDER STRUCTURE ###
-
-# Dissertation-repo
-#   saved_models
-#   dataset
-#       RADCURE-0005.npy
-#       RADCURE-0007.npy
-#       RADCURE-0009.npy
-#       RADCURE-0010.npy
-#       RADCURE-0012.npy
-#       ...
-#   test
-#   train
-#   data_prep.py
-#   model_test.py
-
-
-
 # Setup imports
 import os
 import numpy as np
