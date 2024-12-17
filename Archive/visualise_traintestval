@@ -1,0 +1,72 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider
+
+def visualize_slices_with_slider(folder, filename):
+    """
+    Visualize slices of the image (CT scan) and label (brain stem mask) with a slider for scrolling.
+
+    Args:
+        folder (str): The folder containing 'images' and 'labels'.
+        filename (str): The filename to visualize.
+    """
+    # Define the paths
+    image_path = os.path.join(folder, "images", filename)
+    label_path = os.path.join(folder, "labels", filename)
+
+    # Check if the files exist
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"Image file '{image_path}' not found.")
+    if not os.path.exists(label_path):
+        raise FileNotFoundError(f"Label file '{label_path}' not found.")
+
+    # Load the image and label
+    image = np.load(image_path)  # Shape should be (128, 128, 128)
+    label = np.load(label_path)  # Shape should be (128, 128, 128)
+
+    if len(image.shape) != 3 or len(label.shape) != 3:
+        raise ValueError(f"Expected 3D data, got {image.shape} and {label.shape}.")
+
+    # Initial slice index
+    slice_idx = image.shape[0] // 2
+
+    # Create the figure and axes
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Display the initial slice
+    im1 = ax1.imshow(image[slice_idx, :, :], cmap="gray")
+    ax1.set_title(f"CT Scan - Slice {slice_idx + 1}")
+    ax1.axis("off")
+
+    im2 = ax2.imshow(label[slice_idx, :, :], cmap="viridis")
+    ax2.set_title(f"Brain Stem Mask - Slice {slice_idx + 1}")
+    ax2.axis("off")
+
+    # Add a slider for scrolling through slices
+    ax_slider = plt.axes([0.2, 0.02, 0.6, 0.03], facecolor="lightgoldenrodyellow")
+    slider = Slider(ax_slider, "Slice", 0, image.shape[0] - 1, valinit=slice_idx, valstep=1)
+
+    # Function to update the displayed slices
+    def update(val):
+        slice_idx = int(slider.val)
+        im1.set_data(image[slice_idx, :, :])
+        ax1.set_title(f"CT Scan - Slice {slice_idx + 1}")
+        
+        im2.set_data(label[slice_idx, :, :])
+        ax2.set_title(f"Brain Stem Mask - Slice {slice_idx + 1}")
+
+        fig.canvas.draw_idle()
+
+    # Connect the slider to the update function
+    slider.on_changed(update)
+
+    # Show the plot
+    plt.show()
+
+
+# Example usage
+if __name__ == "__main__":
+    folder = "test"  # Change to "train" or "val" as needed
+    filename = "RADCURE-0005.npy"
+    visualize_slices_with_slider(folder, filename)
