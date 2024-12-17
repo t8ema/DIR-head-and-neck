@@ -1,0 +1,39 @@
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+
+data_dir = os.path.join(os.path.dirname(__file__), "modified_dataset")
+
+
+
+# Choose folder
+example_folder = os.path.join(data_dir, 'RADCURE-0007')
+
+# Load the saved files for visualization
+image = np.load(os.path.join(example_folder, "image.npy"))
+label_brain_stem = np.load(os.path.join(example_folder, "label_brain_stem.npy"))
+label_spinal_cord = np.load(os.path.join(example_folder, "label_spinal_cord.npy"))
+
+# Display one slice (e.g., slice 64) from each subfile
+slice_idx = 64
+plt.figure(figsize=(15, 5))
+
+plt.subplot(1, 3, 1)
+plt.imshow(image[slice_idx], cmap='gray')
+plt.title("CT Image (Slice 64)")
+plt.axis('off')
+
+plt.subplot(1, 3, 2)
+plt.imshow(label_brain_stem[slice_idx], cmap='gray')
+plt.title("Brain Stem Mask (Slice 64)")
+plt.axis('off')
+
+plt.subplot(1, 3, 3)
+plt.imshow(label_spinal_cord[slice_idx], cmap='gray')
+plt.title("Spinal Cord Mask (Slice 64)")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
